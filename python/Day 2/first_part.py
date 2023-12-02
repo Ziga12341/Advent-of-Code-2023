@@ -18,12 +18,10 @@ with (open(whole_input, "r", encoding="utf-8") as file):
         bags_in_sets = bag_info.split("; ")
 
         for bag_set in bags_in_sets:
-            cubes_in_bag = []
             list_of_all_cubes = bag_set.split(", ")
             for one_cube in list_of_all_cubes:
                 cube_value, cube_colour = one_cube.split(" ")
                 cube_value = int(cube_value)
-                cubes_in_bag.append((cube_value, cube_colour))
                 if (cube_colour == "red" and cube_value > 12) or \
                         (cube_colour == "green" and cube_value > 13) or \
                         (cube_colour == "blue" and cube_value > 14):
