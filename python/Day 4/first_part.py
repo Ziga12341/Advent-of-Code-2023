@@ -11,7 +11,7 @@ with open(whole_input, "r", encoding="utf-8") as file:
         my_cards = {card for card in my_cards if card != ""}
         wins = my_cards & wining_cards
         if len(wins) != 0 and wins != "":
-            points += 2 ** (len(wins) - 1)
+            points += 2**(len(wins)-1)
     print(points)
 
 # Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
@@ -21,4 +21,5 @@ with open(whole_input, "r", encoding="utf-8") as file:
 # Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
 # Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
 
+# too high 41608
 # right answer: 27454
