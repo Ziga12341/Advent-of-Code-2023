@@ -1,10 +1,10 @@
+from operator import itemgetter
 small = "small_input.txt"
 whole_input = "input.txt"
 
 
 # remember bid and cards
 # chang letters do number of cards
-
 # ranking card based on other cards in the biggest challenge
 # create dict with groups of each type - each hand has one type
 # order hands in one group and append to list, from group with the highest rank the lowest
@@ -20,8 +20,8 @@ def card_to_digit(card):
         return card_mapper[card]
 
 
-def hand_and_bid_into_tuple(file):
-    with open(small, "r", encoding="utf-8") as file:
+def hand_and_bid_into_tuple(file_input):
+    with open(file_input, "r", encoding="utf-8") as file:
         hand_with_bid = []
         for line in file:
             hand, bid = line.strip().split(" ")
@@ -29,6 +29,7 @@ def hand_and_bid_into_tuple(file):
             for card in hand:
                 hand_in_digit.append(card_to_digit(card))
             hand_with_bid.append((hand_in_digit, int(bid)))
+            print(hand_in_digit)
     return hand_with_bid
 
 
@@ -46,8 +47,8 @@ card_mapper = {
 # KTJJT 220
 # QQQJA 483
 
-print(hand_and_bid_into_tuple(small))
-hands_with_bid = hand_and_bid_into_tuple(small)
+print(hand_and_bid_into_tuple(whole_input))
+hands_with_bid = hand_and_bid_into_tuple(whole_input)
 
 
 def unique_numbers_in_list(list):
@@ -89,15 +90,16 @@ def is_three_of_a_kind(list_of_cards_in_hand):
     return list_of_cards_in_hand.count(first) == 3 or list_of_cards_in_hand.count(
         second) == 3 or list_of_cards_in_hand.count(third) == 3
 
-def rank_hands(hands_with_bid):
+def hands_to_category(hands_with_bid):
     ranking_hands = {
-        "five of a kind": [],
-        "four of a kind": [],
-        "full house": [],
-        "three of a kind": [],
-        "two pair": [],
-        "one pair": [],
         "high card": [],
+        "one pair": [],
+        "two pair": [],
+        "three of a kind": [],
+        "full house": [],
+        "four of a kind": [],
+        "five of a kind": [],
+
 
     }
     for hand_in_list, bid in hands_with_bid:
@@ -139,8 +141,39 @@ def rank_hands(hands_with_bid):
     return ranking_hands
 
 
-print(rank_hands(hands_with_bid))
-print(rank_hands([([3, 2, 10, 3, 13], 765), ([3, 3, 3, 33, 33], 622), ([1, 1, 1, 1, 1], 6000), ([13, 2, 10, 3, 1], 76522), ([3, 3, 3, 3, 43], 76),([3, 3, 3, 33, 43], 6), ([10, 5, 5, 11, 5], 684), ([13, 13, 6, 7, 7], 28), ([13, 10, 11, 11, 10], 220), ([12, 12, 12, 11, 12], 483)]))
+print(hands_to_category(hands_with_bid))
+print(hands_to_category([([3, 2, 10, 3, 13], 765), ([3, 3, 3, 33, 33], 622), ([1, 1, 1, 1, 1], 6000), ([13, 2, 10, 3, 1], 76522), ([3, 3, 3, 3, 43], 76), ([3, 3, 3, 33, 43], 6), ([10, 5, 5, 11, 5], 684), ([13, 13, 6, 7, 7], 28), ([13, 10, 11, 11, 10], 220), ([12, 12, 12, 11, 12], 483)]))
+
+# So, 33332 and 2AAAA are both four of a kind hands, but 33332 is stronger because its first card is stronger. Similarly, 77888 and 77788 are both a full house, but 77888 is stronger because its third card is stronger (and both hands have the same first and second card).
+#[(3, 3, 3, 33, 43], [10, 5, 5, 11, 5]
+def reorder_hands_in_category(list_of_hands_in_category):
+    return sorted(list_of_hands_in_category, key=itemgetter(0))
+
+print(reorder_hands_in_category([([3, 2, 10, 3, 13], 765), ([3, 3, 3, 33, 33], 622), ([1, 1, 1, 1, 1], 6000), ([13, 2, 10, 3, 1], 76522), ([3, 3, 3, 3, 43], 76), ([3, 3, 3, 33, 43], 6), ([10, 5, 5, 11, 5], 684), ([13, 13, 6, 7, 7], 28), ([13, 10, 11, 11, 10], 220), ([12, 12, 12, 11, 12], 483)]))
+categories = hands_to_category(hands_with_bid)
+def collect_ordered_categories(categories):
+    # dict of category
+    ranked_ordered_hands = []
+    for category_name, list_of_hands_with_bid_in_category in categories.items():
+        if list_of_hands_with_bid_in_category:
+            ordered_list_of_hands = reorder_hands_in_category(list_of_hands_with_bid_in_category)
+            for ordered_hands in ordered_list_of_hands:
+                ranked_ordered_hands.append(ordered_hands)
+    return (ranked_ordered_hands)
+
+print(collect_ordered_categories(categories))
+ranked = (collect_ordered_categories(categories))
+
+def calculate_total_winnings(rank_ordered_hands):
+    sumaraza = 0
+    for i, hand_with_bid in enumerate(rank_ordered_hands):
+        rank = i + 1
+        hand, bid = hand_with_bid
+        print((rank, bid))
+        sumaraza += rank * bid
+    return sumaraza
+
+print(calculate_total_winnings(ranked))
 
 # Five of a kind, where all five cards have the same label: AAAAA
 # Four of a kind, where four cards have the same label and one card has a different label: AA8AA
