@@ -19,3 +19,6 @@ with open(whole_input, "r", encoding="utf-8") as file:
     print(records)
 
 # too low: 13554
+
+# Time:      7  15   30
+# Distance:  9  40  200
