@@ -73,7 +73,7 @@ def finish_simultaneously(walk_path, directions, starting_points, ending_points)
 
 
 def find_min_steps_in_all_possible_paths(dict_possible_collections):
-    start_finish_steps = []
+    start_finish_steps_in_list = []
     for start, possible_finish_with_steps in dict_possible_collections.items():
         min = float('inf')  # number bigger than all others
         min_finish_name = ""
@@ -81,8 +81,8 @@ def find_min_steps_in_all_possible_paths(dict_possible_collections):
             if steps < min:
                 min = steps
                 min_finish_name = finish
-        start_finish_steps.append((start, finish, min))
-    return start_finish_steps
+        start_finish_steps_in_list.append((start, min_finish_name, min))
+    return start_finish_steps_in_list
 
 
 def steps_only(start_finish_steps):
