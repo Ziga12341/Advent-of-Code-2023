@@ -60,24 +60,15 @@ def create_expanded_galaxy(galaxy):
     return expand_universe_rows(new_galaxy[-1])
 
 
-def convert_galaxy_to_dict_with_location_and_number(universe):
+def convert_galaxy_to_dict_with_number_and_location(universe):
     number = 1
-    galaxies_locations_and_number = defaultdict(int)
+    galaxies_locations_and_number = defaultdict(tuple)
     for y, line in enumerate(universe):
         for x, char in enumerate(line):
             if char == "#":
-                galaxies_locations_and_number[(x, y)] = number
+                galaxies_locations_and_number[number] = x, y
                 number += 1
     return galaxies_locations_and_number
-
-
-def from_coordinate_to_galaxy_number(universe, x, y):
-    return convert_galaxy_to_dict_with_location_and_number(universe)[(x, y)]
-
-
-def get_galaxies_locations(universe):
-    # convert def convert_galaxy_to_dict_with_location_and_number(universe) - keys to values
-    return {value: key for key, value in convert_galaxy_to_dict_with_location_and_number(universe).items()}
 
 
 def calculate_path_between_galaxies(galaxy_location_1, galaxy_location_2):
@@ -86,40 +77,40 @@ def calculate_path_between_galaxies(galaxy_location_1, galaxy_location_2):
     return abs(x1 - x0) + abs(y1 - y0)
 
 
+# works slow for big input
 def find_pairs(universe):
     all_pairs = set()
-    all_galaxies = get_galaxies_locations(universe)
+    all_galaxies = convert_galaxy_to_dict_with_number_and_location(universe).keys()
+    cleaned_pairs = set()
     for galaxy1 in all_galaxies:
         for galaxy2 in all_galaxies:
             # do not add if pair with different order already in set
             # do not include a pair of galaxies if galaxy itself
-            if ((galaxy1, galaxy2) not in {pair[::-1] for pair in all_pairs}
-                    and (galaxy1, galaxy2) not in {pair for pair in all_pairs}
-                    and galaxy1 != galaxy2):
-                all_pairs.add((galaxy1, galaxy2))
-    return all_pairs
+            all_pairs.add((galaxy1, galaxy2))
+    # this part is too slow
+    for pair in all_pairs:
+        if not pair[::-1] in cleaned_pairs and pair[0] != pair[1]:
+            cleaned_pairs.add(pair)
+
+    return cleaned_pairs
 
 
 def calculate_all_paths(universe):
     counter = 0
     for galaxy1, galaxy2 in find_pairs(universe):
-        galaxy_1_location = get_galaxies_locations(universe)[galaxy1]
-        galaxy_2_location = get_galaxies_locations(universe)[galaxy2]
+        galaxy_1_location = convert_galaxy_to_dict_with_number_and_location(universe)[galaxy1]
+        galaxy_2_location = convert_galaxy_to_dict_with_number_and_location(universe)[galaxy2]
         counter += calculate_path_between_galaxies(galaxy_1_location, galaxy_2_location)
     return counter
 
 
 universe_from_input = read_lines(l)
-print(universe_from_input)
 expanded_universe = create_expanded_galaxy(universe_from_input)
-# expanded_universe_numbered = convert_hash_to_number(expanded_universe)
-# print(expanded_universe_numbered)
-galaxies_locations = convert_galaxy_to_dict_with_location_and_number(expanded_universe)
-print(galaxies_locations)
-# print("galaxies_locations[0]", galaxies_locations[0])
-# print(find_pairs(expanded_universe_numbered))
-# print(char_from_coordinate(expanded_universe_numbered, 9, 10))
-#
+galaxies_locations = convert_galaxy_to_dict_with_number_and_location(expanded_universe)
+
+# print(find_pairs(expanded_universe))
+
+
 print(calculate_all_paths(expanded_universe))
 
 
@@ -131,24 +122,24 @@ class TestFunctions(unittest.TestCase):
     def setUp(self):
         self.universe_from_input = read_lines(s)
         self.expanded_universe = create_expanded_galaxy(self.universe_from_input)
-        self.expanded_universe_numbered = convert_galaxy_to_dict_with_location_and_number(self.expanded_universe)
-        self.galaxies_locations = get_galaxies_locations(self.expanded_universe)
+        self.expanded_universe_numbered = convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)
+        self.galaxies_locations = convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)
 
     def test_convert_galaxy_to_dict_with_location_and_number(self):
-        self.assertIn((9, 10), convert_galaxy_to_dict_with_location_and_number(self.expanded_universe))
+        self.assertIn(9, convert_galaxy_to_dict_with_number_and_location(self.expanded_universe))
 
     def test_from_coordinate_to_galaxy_number(self):
-        self.assertEqual(from_coordinate_to_galaxy_number(self.expanded_universe, 4, 0), 1, "Should be 1")
-        self.assertEqual(from_coordinate_to_galaxy_number(self.expanded_universe, 9, 1), 2, "Should be 2")
-        self.assertEqual(from_coordinate_to_galaxy_number(self.expanded_universe, 0, 2), 3, "Should be 3")
-        self.assertEqual(from_coordinate_to_galaxy_number(self.expanded_universe, 9, 10), 7, "Should be 7")
+        self.assertEqual(convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)[1], (4, 0))
+        self.assertEqual(convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)[2], (9, 1))
+        self.assertEqual(convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)[3], (0, 2))
+        self.assertEqual(convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)[7], (9, 10))
 
     def test_get_galaxies_location(self):
-        self.assertEqual(get_galaxies_locations(self.expanded_universe)[1], (4, 0),
+        self.assertEqual(convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)[1], (4, 0),
                          "Should get location of universe 1")
-        self.assertEqual(get_galaxies_locations(self.expanded_universe)[3], (0, 2),
+        self.assertEqual(convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)[3], (0, 2),
                          "Should get location of universe 3")
-        self.assertEqual(get_galaxies_locations(self.expanded_universe)[6], (12, 7),
+        self.assertEqual(convert_galaxy_to_dict_with_number_and_location(self.expanded_universe)[6], (12, 7),
                          "Should get location of universe 6")
 
     def test_calculate_path_between_galaxies(self):
