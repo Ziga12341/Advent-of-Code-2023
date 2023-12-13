@@ -138,7 +138,8 @@ def calculate_all_paths(universe, times_galaxy_space_expansion=1):
     return counter
 
 
-print("Part 1: small input ", calculate_all_paths(universe_from_small_input, times_galaxy_space_expansion=10))
+print("Part 1: small input ", calculate_all_paths(universe_from_small_input, times_galaxy_space_expansion=1))
+print("Part 2: small input ", calculate_all_paths(universe_from_small_input, times_galaxy_space_expansion=10))
 print("Part 1: ", calculate_all_paths(universe_from_large_input, times_galaxy_space_expansion=1))
 print("Part 2: ", calculate_all_paths(universe_from_large_input, times_galaxy_space_expansion=1000000))
 
