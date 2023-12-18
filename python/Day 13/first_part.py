@@ -1,12 +1,10 @@
 import unittest
-from typing import List
-from collections import defaultdict
 
 s = "small_input.txt"
 l = "input.txt"
 
 
-def read_lines(file: str) -> List[List]:
+def read_lines(file: str) -> list[list]:
     with open(file, "r", encoding="utf-8") as file:
         patterns = []
         pattern = []
@@ -21,11 +19,11 @@ def read_lines(file: str) -> List[List]:
         return patterns
 
 
-small_patterns: List[List[str]] = read_lines(s)
-large_patterns: List[List[str]] = read_lines(l)
+small_patterns: list[list[str]] = read_lines(s)
+large_patterns: list[list[str]] = read_lines(l)
 
 
-def number_of_rows_above_horizontal_line(pattern: List[str]) -> int:
+def number_of_rows_above_horizontal_line(pattern: list[str]) -> int:
     for i, (line1, line2) in enumerate(zip(pattern, pattern[1:])):
         if line1 == line2:
             # print(i)
@@ -51,18 +49,17 @@ def number_of_rows_above_horizontal_line(pattern: List[str]) -> int:
 
 # print(number_of_rows_above_horizontal_line(small_patterns[1]))
 
-def from_rows_to_columns(pattern: List[str]) -> List[str]:
+def from_rows_to_columns(pattern: list[str]) -> list[str]:
     columns_to_rows = []
     for i in range(len(pattern[0])):
         new_line = ""
         for line in pattern:
             new_line += line[i]
         columns_to_rows.append(new_line)
-        new_line = ""
     return columns_to_rows
 
 
-def number_of_columns_on_left_of_vertical_line(pattern: List[str]) -> int:
+def number_of_columns_on_left_of_vertical_line(pattern: list[str]) -> int:
     # convert rows to columns
     pattern = from_rows_to_columns(pattern)
     # print(pattern)
@@ -87,7 +84,7 @@ def number_of_columns_on_left_of_vertical_line(pattern: List[str]) -> int:
 (number_of_columns_on_left_of_vertical_line(small_patterns[0]))
 
 
-def sum_columns_and_rows_counter(patterns: List[List]) -> int:
+def sum_columns_and_rows_counter(patterns: list[list]) -> int:
     counter = 0
     for i, pattern in enumerate(patterns):
         vertical_counter = number_of_columns_on_left_of_vertical_line(pattern)
@@ -104,9 +101,9 @@ print("Part 1: ", sum_columns_and_rows_counter(large_patterns))
 
 class TestFunctions(unittest.TestCase):
     def setUp(self):
-        self.small_patterns: List[List] = read_lines(s)
-        self.sample_grid = ["123456", "123456", "123456", "123456", "123456", "123456"]
-        self.sample_grid_converted = ["111111", "222222", "333333", "444444", "555555", "666666"]
+        self.small_patterns: list[list] = read_lines(s)
+        self.sample_grid = ["123457", "123456", "123456", "123456", "123456", "123458"]
+        self.sample_grid_converted = ["111111", "222222", "333333", "444444", "555555", "766668"]
         self.last_from_input = ["#..#..#", "######.", ".....#.", "#..####", ".##....", "....###", "#..##.#", "#..###.",
                                 "####.#.", ".##.#.#", "#..#.#.", "....###", ".###.#.", ".##..#.", ".##..#."]
         self.fifth_from_input = ["#..####", ".##....", "..#....", "..#.#..", "#.#.#..", "..#....", ".##....", "#..####",
